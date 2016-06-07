@@ -11,9 +11,9 @@ using namespace std;
 // Линейный конгруэнтный метод, формула
 long lcm(long prev)
 {
-    int m = 100;
-    int a = 21;
-    int c = 97;
+    int m = 134456;
+    int a = 141;
+    int c = 928411;
     return (a*prev + c) % m;
 }
 
@@ -24,35 +24,48 @@ vector<int> pr_generator(long seed,long size)
     srand(seed);
     sample.push_back(0 + rand() % 100);
     for(int i=1; i< size; ++i)
+    {
         sample.push_back(lcm(sample[i-1]));
+    }
     return sample;
 }
 
-// Хи-квадрат для 9 степеней свободы
+// Хи-квадрат
 bool ChiSquared(vector<int> sample)
 {
     sort(sample.begin(), sample.end());
 
-    const int       NGROUPS         = 10;
-    const double    PROBABILITY     = 0.1;
-    int             sampleCounter   = 0;
     int             nSize           = sample.size();
-    double          gapWidth        = 10;
-    double          uborder         = gapWidth;
+    int             nGroups         = 5;
+    double          probability     = 0.2;
     double          chi_expr        = 0;
-    double          chi_qntl        = 16.919;
+    double          chi_qntl        = 9.48;
+    vector <int>    freaquency      = {0,0,0,0,0};
 
-    for(int i=0; i < NGROUPS; ++i)
+    for(int i=0; i < nSize; ++i)
     {
-        int freaquency=0;
-        while(sample[sampleCounter] < uborder  && sampleCounter < nSize)
+        int t = (sample[i]*nGroups/134456)+1;
+        switch(t)
         {
-            ++sampleCounter;
-            ++freaquency;
+        case 1:
+            freaquency[0]++;
+            break;
+        case 2:
+            freaquency[1]++;
+            break;
+        case 3:
+            freaquency[2]++;
+            break;
+        case 4:
+            freaquency[3]++;
+            break;
+        case 5:
+            freaquency[4]++;
+            break;
         }
-        chi_expr += std::pow(freaquency-nSize*PROBABILITY, 2)/(nSize*PROBABILITY);
-        uborder += gapWidth;
     }
+    for(auto f: freaquency)
+        chi_expr += std::pow(f-nSize*probability, 2)/(nSize*probability);
     return chi_expr <= chi_qntl;
 }
 
@@ -83,7 +96,7 @@ double variationCoef(vector<int> sample)
 
 int main()
 {
-    cout << "Генерация псевдослучайных чисел в отрезке [0,100]" << endl << endl;
+    cout << "Генерация псевдослучайных чисел в отрезке" << endl << endl;
     vector<vector<int>> sset;
     for(int i=0; i < SAMPLE_SET; ++i)
     {
